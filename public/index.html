@@ -1,0 +1,52 @@
+<html>
+
+<head>
+  <title>Express</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="javascripts/init.js"></script>
+  <script src="javascripts/ws/init-ws.js"></script>
+  <script src="javascripts/ws/ws-message-serializer.js"></script>
+  <script src="javascripts/ws/chat/chat-events.js"></script>
+  <script src="javascripts/ws/chat/working-with-ui.js"></script>
+  <script src="javascripts/ws/file/file-events.js"></script>
+  <script src="javascripts/ws/file/working-with-ui.js"></script>
+</head>
+
+<body>
+
+  <!-- File sender -->
+  <div>
+    <h1>File sender</h1>
+
+    <div>
+      <input id="input-file-name" type="file">
+      <button id="btn-upload-file" type="submit">Upload</button>
+    </div>
+  </div>
+
+  <br><br><br>
+
+  <!-- Chat -->
+  <div>
+    <h1>A chat?</h1>
+
+    <div>
+      Nickname:
+      <input id="input-nickname" type="text">
+    </div>
+
+    <form onsubmit="return false;">
+      <div>
+        Message:
+        <input id="input-message" type="text">
+        <button id="btn-send-message" type="submit">Send</button>
+      </div>
+    </form>
+
+    <br><br>
+
+    <div id="chat"></div>
+  </div>
+</body>
+
+</html>
