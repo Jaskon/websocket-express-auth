@@ -14,4 +14,9 @@ router.get('/', (req, res, next) => {
 });
 
 
+router.get('/file', (req, res) => {
+  res.sendFile(path.join(__dirname, '../doc.pdf'));
+});
+
+
 module.exports = router;
