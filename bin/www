@@ -28,8 +28,9 @@ const server = http.createServer(app);
  */
 
 const io = SocketIO(server, {
-  maxHttpBufferSize: 1e9,  // 1gb?
-  transports: ['websocket']
+  maxHttpBufferSize: 1e12,  // 1tb?
+  transports: ['websocket'],
+  pingTimeout: 1e6
 });
 // io.use(wsLoginHandler());
 io.on('connection', wsHandler(io));
