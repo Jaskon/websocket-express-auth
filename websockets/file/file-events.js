@@ -1,10 +1,12 @@
 const fs = require('fs');
 
 
-function fileEvents({ data, ws }) {
-  console.log(`File received. Size: ${data.byteLength}`);
-  fs.writeFile('doc.pdf', data, () => {
-    console.log('File written to doc.pdf')
+function fileEvents(socket, io) {
+  socket.on('file-upload', file => {
+    console.log(`File received. Size: ${file.byteLength}`);
+    fs.writeFile('doc.pdf', file, () => {
+      console.log('File written to doc.pdf')
+    });
   });
 }
 

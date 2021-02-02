@@ -1,9 +1,7 @@
-function fileEvents(type, data) {
-  switch (type) {
-    case 'file-uploaded':
-      // TODO
-      break;
-  }
+function fileEvents(socket) {
+  socket.on('file-uploaded', data => {
+    // TODO
+  });
 }
 
 
@@ -12,7 +10,8 @@ function fileEvents(type, data) {
 function sendFileWS(file) {
   const reader = new FileReader();
   reader.addEventListener('loadend', ev => {
-    ws.send(file);
+    socket.emit('file-upload', file);
+    console.log('File uploaded');
   });
   reader.readAsArrayBuffer(file);
 }

@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-const WebSocket = require('ws');
-const wsHandler = require('../websockets/main');
+const SocketIO = require('socket.io');
+const {wsHandler, wsLogMiddleware} = require('../websockets/main');
 const app = require('../app');
 const debug = require('debug')('websocket:server');
 const http = require('http');
@@ -28,9 +28,13 @@ const server = http.createServer(app);
  * Create WebSocket server
  */
 
-const wss = new WebSocket.Server({ server });
-// wss.use(wsLoginHandler());
-wss.on('connection', (ws, request) => wsHandler(wss, ws, request));
+const io = SocketIO(server, {
+  maxHttpBufferSize: 1e9,  // 1gb?
+  transports: ['websocket']
+});
+io.use(wsLoginHandler());
+// io.use(wsLogMiddleware);
+io.on('connection', wsHandler(io));
 
 /**
  * Listen on provided port, on all network interfaces.

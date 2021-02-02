@@ -21,6 +21,7 @@
     "ws": "^7.4.2"
   },
   "devDependencies": {
+    "@types/socket.io": "^2.1.13",
     "@types/ws": "^7.4.0",
     "express-session": "^1.17.1"
   }

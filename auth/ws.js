@@ -5,14 +5,14 @@ const {authSecret, sessionStore} = require("./helpers");
 function wsLoginHandler() {
   return passportSocketIo.authorize({
     cookieParser: cookieParser(),
-    // key: 'connect.sid',
+    key: 'connect.sid',
     secret: authSecret,
     store: sessionStore,
     success: (...args) => {
-      console.log(args)
+      console.log(args);
     },
     fail: (...args) => {
-      console.log(args)
+      console.log(args);
     }
   })
 }
