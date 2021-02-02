@@ -5,7 +5,6 @@ const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 
 const indexRouter = require('./routes/index');
-const authMiddleware = require('./auth/auth');
 
 const app = express();
 
@@ -21,7 +20,6 @@ app.use(sassMiddleware({
   sourceMap: true
 }));
 
-app.use(authMiddleware);
 app.use('/', indexRouter);
 
 // Static content

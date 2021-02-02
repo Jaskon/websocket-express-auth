@@ -5,11 +5,10 @@
  */
 
 const SocketIO = require('socket.io');
-const {wsHandler, wsLogMiddleware} = require('../websockets/main');
+const {wsHandler} = require('../websockets/main');
 const app = require('../app');
 const debug = require('debug')('websocket:server');
 const http = require('http');
-const {wsLoginHandler} = require("../auth/ws");
 
 /**
  * Get port from environment and store in Express.
@@ -32,8 +31,7 @@ const io = SocketIO(server, {
   maxHttpBufferSize: 1e9,  // 1gb?
   transports: ['websocket']
 });
-io.use(wsLoginHandler());
-// io.use(wsLogMiddleware);
+// io.use(wsLoginHandler());
 io.on('connection', wsHandler(io));
 
 /**
