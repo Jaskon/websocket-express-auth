@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <form onsubmit="return false;">
+        <input id="input-token" type="text" >
+        <button id="btn-login" type="submit">Login</button>
+    </form>
+
+    <script>
+        window.addEventListener('load', () => {
+          document.getElementById('btn-login').addEventListener('click', login);
+        });
+
+        function login() {
+            const token = document.getElementById('input-token').value;
+            fetch('/login', { headers: { 'authorization': `Bearer ${token}` }, redirect: 'follow'});
+        }
+    </script>
+</body>
+</html>
