@@ -1,14 +1,18 @@
-WebSocket.prototype.sendMessage = function(type, data) {
-  this.send(wsDataSerialize(type, data))
-};
-
 let socket;
+let socketFileUploader;
 wsConnect();
 
 function wsConnect() {
   socket = io({
     transports: ['websocket'],
     reconnectionAttempts: 50
+  });
+
+  socketFileUploader = socketFileUploaderSetUp(socket);
+
+  // Move to fileUploaderEvents()?
+  socketFileUploader.addEventListener('progress', ev => {
+    console.log(`File loading progress: ${ev.bytesLoaded} of ${ev.file.size}`);
   });
 
   socket.on('connect', connectHandler);
@@ -27,7 +31,7 @@ function wsConnect() {
 
 function connectHandler(socket) {
   return function() {
-    ws.sendMessage('meta', '[Client] Connected!')
+    socket.emit('meta', '[Client] Connected!')
     console.log('Connected to ws', socket.id);
   }
 }

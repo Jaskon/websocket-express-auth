@@ -3,6 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
+const serveIndex = require('serve-index');
 
 const indexRouter = require('./routes/index');
 const authMiddleware = require('./auth/auth');
@@ -26,5 +27,7 @@ app.use('/', indexRouter);
 
 // Static content
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/files', express.static(path.join(__dirname, 'files-uploaded')));
+app.use('/files', serveIndex(path.join(__dirname, 'files-uploaded')));
 
 module.exports = app;

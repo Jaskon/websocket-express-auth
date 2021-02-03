@@ -16,7 +16,9 @@
     "passport": "^0.4.1",
     "passport-http-bearer": "^1.0.1",
     "passport.socketio": "^3.7.0",
+    "serve-index": "^1.9.1",
     "socket.io": "^3.1.0",
+    "socketio-file-upload": "^0.7.3",
     "websocket": "^1.0.33",
     "ws": "^7.4.2"
   },
