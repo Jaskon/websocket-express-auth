@@ -29,8 +29,9 @@ const server = http.createServer(app);
  */
 
 const io = SocketIO(server, {
-  maxHttpBufferSize: 1e9,  // 1gb?
-  transports: ['websocket']
+  maxHttpBufferSize: 1e12,  // 1tb?
+  transports: ['websocket'],
+  pingTimeout: 1e6  // Client is not able to answer 'ping' request while uploading a big file (?)
 });
 // io.use(wsLoginHandler());
 io.on('connection', wsHandler(io));
