@@ -5,11 +5,10 @@
  */
 
 const SocketIO = require('socket.io');
-const {wsHandler} = require('../websockets/main');
+const { wsHandler } = require('../websockets/main');
 const app = require('../app');
 const debug = require('debug')('websocket:server');
 const http = require('http');
-const {wsLoginHandler} = require("../auth/ws");
 
 /**
  * Get port from environment and store in Express.
@@ -23,17 +22,18 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+server.on('upgrade', (req, socket, buffer) => {
+  console.log('Upgrade request called!', req.url);
+});
 
 /**
  * Create WebSocket server
  */
 
 const io = SocketIO(server, {
-  maxHttpBufferSize: 1e12,  // 1tb?
-  transports: ['websocket'],
-  pingTimeout: 1e6  // Client is not able to answer 'ping' request while uploading a big file (?)
+  maxHttpBufferSize: 1e9,  // 1gb?
+  transports: ['websocket']
 });
-// io.use(wsLoginHandler());
 io.on('connection', wsHandler(io));
 
 /**

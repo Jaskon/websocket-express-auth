@@ -3,18 +3,12 @@ const BearerStrategy = require('passport-http-bearer');
 const session = require('express-session');
 const express = require('express');
 const path = require("path");
-const {authSecret, sessionStore, handleLogin, handleLoginSuccess, checkAuth} = require("./helpers");
+const { sessionConfig, handleLogin, handleLoginSuccess, checkAuth, } = require("./helpers");
 const router = express.Router();
 
 
 // Init session
-router.use(session({
-  secret: authSecret,
-  cookie: {
-    maxAge: 3600 * 1000
-  },
-  store: sessionStore
-}));
+router.use(session(sessionConfig));
 
 // Init passport
 router.use(passport.initialize());

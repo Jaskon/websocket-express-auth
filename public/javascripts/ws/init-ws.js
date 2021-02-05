@@ -5,7 +5,11 @@ wsConnect();
 function wsConnect() {
   socket = io({
     transports: ['websocket'],
-    reconnectionAttempts: 50
+    reconnectionAttempts: 50,
+    auth: {
+      token: 'asdf Bearer',
+      something: 'hello'
+    }
   });
 
   socketFileUploader = socketFileUploaderSetUp(socket);

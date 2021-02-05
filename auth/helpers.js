@@ -6,6 +6,13 @@ const authSecret = 'asdf-123-secret';
 const sessionStore = new MongoStore({
   url: 'mongodb://127.0.0.1:27017/websockets-test-auth'
 });
+const sessionConfig = {
+  secret: authSecret,
+  cookie: {
+    maxAge: 3600 * 1000
+  },
+  store: sessionStore
+};
 
 
 function handleLogin(token, done) {
@@ -35,6 +42,7 @@ function checkAuth(req, res, next) {
 module.exports = {
   authSecret,
   sessionStore,
+  sessionConfig,
   handleLogin,
   handleLoginSuccess,
   checkAuth

@@ -1,20 +1,15 @@
-const passportSocketIo = require("passport.socketio");
 const cookieParser = require('cookie-parser');
 const {authSecret, sessionStore} = require("./helpers");
 
-function wsLoginHandler() {
-  return passportSocketIo.authorize({
-    cookieParser: cookieParser(),
-    key: 'connect.sid',
-    secret: authSecret,
-    store: sessionStore,
-    success: (...args) => {
-      console.log(args);
-    },
-    fail: (...args) => {
-      console.log(args);
-    }
-  })
+function wsLoginHandler(socket, next) {
+  // Auth token should be set on ui part as well
+  // console.log('Handshake.auth: ', socket.handshake.auth);
+  if (socket.request.session.user) {
+    return next();
+  }
+
+  console.log('Not authenticated user tried to connect to ws!');
+  socket.disconnect(true);
 }
 
 
