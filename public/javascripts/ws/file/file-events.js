@@ -11,12 +11,12 @@ function fileEvents(socket) {
 
 //* File API
 
-function sendFileWS(file) {
+function sendFilesWS(files) {
   // const reader = new FileReader();
   // reader.addEventListener('loadend', ev => {
   //   socket.emit('file-upload', file);
   //   console.log('File upload started');
   // });
   // reader.readAsArrayBuffer(file);
-  socketFileUploader.submitFiles([file]);
+  socketFileUploader.submitFiles(files);
 }
