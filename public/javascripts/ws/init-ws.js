@@ -5,7 +5,7 @@ wsConnect();
 function wsConnect() {
   socket = io({
     transports: ['websocket'],
-    reconnectionAttempts: 50,
+    reconnectionAttempts: 5,
     auth: {
       token: 'asdf Bearer',
       something: 'hello'
@@ -13,11 +13,6 @@ function wsConnect() {
   });
 
   socketFileUploader = socketFileUploaderSetUp(socket);
-
-  // Move to fileUploaderEvents()?
-  socketFileUploader.addEventListener('progress', ev => {
-    console.log(`File loading progress: ${ev.bytesLoaded} of ${ev.file.size}`);
-  });
 
   socket.on('connect', connectHandler);
   socket.on('connect_error', connectErrorHandler);
@@ -29,7 +24,7 @@ function wsConnect() {
 
   // Communication
   chatEvents(socket);
-  fileEvents(socket);
+  fileEvents(socket, socketFileUploader);
 }
 
 

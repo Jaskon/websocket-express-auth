@@ -12,6 +12,10 @@ function fileEvents(socket, io) {
       socket.emit(FILE_WRITTEN);
     });
   });
+
+  socket.on('simulate-error', () => {
+    socket.server.engine.close();
+  });
 }
 
 

@@ -1,9 +1,11 @@
-const siofu = require('socketio-file-upload');
+const siofu = require('../../lib/siofu-server');
 
 
 function socketFileUploaderSetUp(socket) {
-  const uploader = new siofu();
-  uploader.dir = './files-uploaded';
+  const uploader = new siofu({
+    dir: './files-uploaded',
+    reconnectOnFail: true
+  });
   uploader.listen(socket);
 
   return uploader;

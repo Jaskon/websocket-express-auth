@@ -85,6 +85,7 @@
 	self.serializedOctets = _getOption("serializedOctets", false);
 	self.useBuffer = _getOption("useBuffer", true);
 	self.chunkSize = _getOption("chunkSize", 1024 * 100); // 100kb default chunk size
+	self.reconnectOnFail = _getOption("reconnectOnFail", false);
 	self.topicName = _getOption("topicName", "siofu");
 
 	/**
@@ -338,22 +339,17 @@
 			}
 		};
 
-		// Callback for when the reader has completed a load event.
-		var loadCb = function (event) {
-			// Abort if we are told to do so.
-			if (communicator.abort) return;
-
-			// Transmit the newly loaded data to the server and emit a client event
+		var shiftOffsetAndCheck = function () {
 			var bytesLoaded = Math.min(offset+chunkSize, file.size);
-			transmitPart(offset, bytesLoaded, event.target.result);
 			_dispatch("progress", {
 				file: file,
 				bytesLoaded: bytesLoaded,
 				name: newName
 			});
 
-			// Get ready to send the next chunk
+
 			offset += chunkSize;
+
 			if (offset >= file.size) {
 				// All done!
 				transmitDone();
@@ -363,7 +359,20 @@
 					name: newName
 				});
 				uploadComplete = true;
+
+				_stopListeningTo(socket.io, 'reconnect', _onReconnect);
+				_stopListeningTo(socket.io, 'reconnect_failed', _onReconnectFailed);
 			}
+		}
+
+		// Callback for when the reader has completed a load event.
+		var loadCb = function (event) {
+			// Abort if we are told to do so.
+			if (communicator.abort) return;
+
+			// Transmit the newly loaded data to the server and emit a client event
+			var bytesToLoad = Math.min(offset+chunkSize, file.size);
+			transmitPart(offset, bytesToLoad, event.target.result);
 		};
 		_listenTo(reader, "load", loadCb);
 
@@ -402,11 +411,64 @@
 			processChunk();
 		};
 		var chunkCallback = function(){
-			if ( !uploadComplete )
+			if ( !uploadComplete ) {
+				shiftOffsetAndCheck();
 				processChunk();
+			}
 		};
 		readyCallbacks[id] = readyCallback;
 		chunkCallbacks[id] = chunkCallback;
+
+		_listenTo(socket, "disconnect", () => {
+			if (!uploadComplete) {
+				if (!self.reconnectOnFail) {
+					// _dispatch('error');
+					_errorCallback({
+						id: id,
+						message: 'Disconnected in the middle of upload'
+					});
+				}
+			}
+		});
+
+		const _onReconnect = () => {
+			// Try to resume file upload
+			if (!uploadComplete) {
+				tryToResumeUpload();
+			}
+		};
+
+		const _onReconnectFailed = () => {
+			if (!uploadComplete) {
+				_errorCallback({
+					id: id,
+					message: 'Not able to reconnect. File upload failed'
+				});
+			}
+		};
+
+		if (self.reconnectOnFail) {
+			_listenTo(socket.io, 'reconnect', _onReconnect);
+			_listenTo(socket.io, 'reconnect_failed', _onReconnectFailed);
+		}
+
+		//* Reconnection
+		// Try to resume broken upload
+		// Server answers with amount if bytes it finished loading on
+		var tryToResumeUpload = function () {
+			socket.emit(_getTopicName("_retry"), _wrapData({
+				id: id
+			}, "retry"));
+		}
+
+		_listenTo(socket, _getTopicName("_retry_ready"), data => {
+			_dispatch("retry", {
+				file: file,
+				bytesLoaded: data.bytesLoaded
+			});
+			offset = data.bytesLoaded;
+			processChunk();
+		});
 
 		return communicator;
 	};
@@ -718,6 +780,7 @@
 	};
 
 	var _errorCallback = function (data) {
+		// TODO: Recognize file uploading in progress and dispatch an error
 		if ( uploadedFiles[data.id] ) {
 			_dispatch("error", {
 				file: uploadedFiles[data.id],

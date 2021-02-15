@@ -12,6 +12,14 @@
   <script src="javascripts/ws/file/socket-file-uploader-set-up.js"></script>
   <script src="javascripts/ws/init-ws.js"></script>
   <script src="javascripts/init.js"></script>
+
+  <style>
+    .file-upload-progress {
+      height: 20px;
+      background-color: black;
+      width: 0;
+    }
+  </style>
 </head>
 
 <body>
@@ -25,6 +33,12 @@
       <button id="btn-upload-file" type="submit">Upload</button>
       <button id="btn-list-files" type="submit">List files</button>
     </div>
+    <br>
+    <!-- Progress bar -->
+    <div style="border: 1px solid black; width: 200px">
+      <div id="file-upload-progress" class="file-upload-progress"></div>
+    </div>
+    <button id="btn-simulate-error">Simulate error</button>
   </div>
 
   <br><br><br>

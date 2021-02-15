@@ -10,7 +10,10 @@ const allowedOrigins = ['http://localhost:3000'];
 // Middleware wrapper
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 const authEnabled = false;
-const fakeDelay = null;  // In ms
+const fakeDelay = 50;  // In ms
+
+// session.id is a key
+const fileUploadInstances = {};
 
 
 function wsHandler(io) {
@@ -44,7 +47,18 @@ function wsHandler(io) {
       };
     }
 
-    const uploader = socketFileUploaderSetUp(socket);
+    // Trying to restore uploader by session id
+    let uploader;
+    uploader = fileUploadInstances[socket.request.session.id];
+
+    if (uploader) {
+      uploader.listen(socket);
+    } else {
+      uploader = socketFileUploaderSetUp(socket);
+      fileUploadInstances[socket.request.session.id] = uploader;
+      // TODO: Expire an uploader by session expiration
+      //  If its a timeout - update (create a new) timeout if user updated his session
+    }
 
     // Move to fileUploadEvents()?
     uploader.on('start', ev => { console.log('File upload started'); });
